@@ -1,0 +1,2 @@
+# pyjack
+Blackjack in python
