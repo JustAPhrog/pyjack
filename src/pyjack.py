@@ -31,7 +31,7 @@ def is_not_ace(card):
 
 class Player:
     """Player"""
-    def __init__(self, name:str, wins=0, loses=0, deck_cards:list[dict]=[]) -> None:
+    def __init__(self, name:str, wins=0, loses=0, deck_cards:list[tuple]=[]) -> None:
         self.log = logging.getLogger(self.__class__.__name__)
         self.name = name
         self.wins = wins
@@ -41,11 +41,11 @@ class Player:
     def __str__(self):
         return "%s with %s" % (self.name, self.cards)
 
-    def score(self):
+    def score(self) -> int:
         cards_value = 0
         for card in filter(is_not_ace, self.cards):
             cards_value += card[1] 
-        for ace in filter(is_ace, self.cards):
+        for _ in filter(is_ace, self.cards):
             if cards_value + cards[-1][1][1] <= 21:
                 cards_value += cards[-1][1][1]
             else:
@@ -70,13 +70,14 @@ class Game:
         for i in range(56 * nr_decks):
             self.deck.append(cards[i % 14]) 
         random.shuffle(self.deck)
+        self.log.debug('Deck created')
 
     def _take_card(self) -> tuple:
         card = self.deck.pop()
         self.log.debug('Card taken %s', card)
         return card
 
-    def _round(self, player:Player):
+    def _round(self, player:Player) -> None:
         self.log.debug('%s turn', player.name)
         self.log.debug('staring cards %s', player.cards)
         while True:
@@ -91,7 +92,7 @@ class Game:
         self.log.debug('Cards %s', player.cards)
         # self.log.debug('Final score %s', player.score())
 
-    def _host_round(self):
+    def _host_round(self) -> None:
         self.log.debug('Host %s round', self.host.name)
         while True:
             # self.log.debug('host score %s', self.host.score())
@@ -102,7 +103,7 @@ class Game:
         self.log.debug('Cards %s', self.host.cards)
         # self.log.debug('Final score %s', self.host.score())
 
-    def _check_scores(self):
+    def _check_scores(self) -> None:
         self.log.debug('check scores')
         results = [(player.score(), player.name) for player in self.players]
         results.append((self.host.score(), self.host.name))
@@ -110,7 +111,7 @@ class Game:
         results = sorted(results, key=lambda k: k[0])
         self.log.debug('Results %s', results)
 
-    def _make_game(self):
+    def _make_game(self) -> None:
         self.current_game += 1
         self.log.debug('New game %s', self.current_game)
         self.log.debug('%s taking 2 cards', self.host.name)
@@ -124,7 +125,8 @@ class Game:
 
     def main_loop(self, decks:int) -> None:
         try:
-            self._create_deck(decks)
+            if len(self.deck) == 0:
+                self._create_deck(decks)
             self.log.debug('Deck last cards %s', self.deck[-3:])
             self._make_game()
             self.log.debug('End of game')
