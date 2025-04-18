@@ -31,12 +31,12 @@ def is_not_ace(card):
 
 class Player:
     """Player"""
-    def __init__(self, name:str, wins=0, loses=0, deck_cards:list[tuple]=[]) -> None:
+    def __init__(self, name:str, wins=0, loses=0, deck_cards:list[tuple]=None) -> None:
         self.log = logging.getLogger(self.__class__.__name__)
         self.name = name
         self.wins = wins
         self.loses = loses
-        self.cards = deck_cards
+        self.cards = deck_cards if deck_cards is not None else []
     
     def __str__(self):
         return "%s with %s" % (self.name, self.cards)
@@ -54,6 +54,7 @@ class Player:
         return cards_value
 
     def add_card(self, card:tuple) -> None:
+        self.log.debug('To %s add %s', self.name, card)
         self.cards.append(card)
 
 
