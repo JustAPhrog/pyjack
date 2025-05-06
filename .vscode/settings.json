@@ -2,5 +2,10 @@
     "pylint.args": [
         "\"--errors-only\"",
         "\"--disable=C,R\""
+    ],
+    "cSpell.words": [
+        "blit",
+        "dropselect",
+        "pyjack"
     ]
 }
