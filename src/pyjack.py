@@ -60,11 +60,11 @@ class Player:
 
 class Game:
     """Main class which hold deck and players"""
-    def __init__(self, host_name:str, players:list[Player], deck:list):
+    def __init__(self, host_name:str, players:list[Player], deck:list=None):
         self.log = logging.getLogger(self.__class__.__name__)
         self.host = Player(host_name)
         self.players = players
-        self.deck = deck
+        self.deck = deck if deck else []
         self.current_game = 0
 
     def _create_deck(self, nr_decks:int) -> None:
@@ -104,7 +104,7 @@ class Game:
         self.log.debug('Cards %s', self.host.cards)
         # self.log.debug('Final score %s', self.host.score())
 
-    def _get_results(self) -> None:
+    def get_results(self) -> None:
         self.log.debug('check scores')
         results = [(player.score(), player.name) for player in self.players]
         results.append((self.host.score(), self.host.name))
@@ -113,9 +113,9 @@ class Game:
         self.log.debug('Results %s', results)
         return results
 
-    def _who_wins(self) -> list[tuple[int, str]]:
+    def who_wins(self) -> list[tuple[int, str]]:
         self.log.debug('Check winner')
-        results = self._get_results()
+        results = self.get_results()
         winners = []
         for result in results:
             if result[0] <= 21 and (len(winners) == 0 or winners[0][0] == result[0]):
@@ -133,9 +133,9 @@ class Game:
             self._round(player)
         self._host_round()
 
-        print('Winner is ', end='')
+        self.log.info('Winner is ')
         for winner in self._who_wins():
-            print('%s with %s' % (winner[::-1]))
+             self.log.info('%s with %s' % (winner[::-1]))
 
 
     def main_loop(self, decks:int) -> None:
